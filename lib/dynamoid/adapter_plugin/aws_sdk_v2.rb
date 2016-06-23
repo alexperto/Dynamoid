@@ -257,7 +257,7 @@ module Dynamoid
       # @since 1.0.0
       #
       # @todo: Provide support for various options http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB/Client.html#put_item-instance_method
-      def put_item(table_name, object, options = nil)
+      def put_item(table_name, object, options = {})
         item = {}
 
         object.each do |k, v|
@@ -265,11 +265,11 @@ module Dynamoid
           item[k.to_s] = v
         end
 
+        put_item_params = { table_name: table_name, item: item, expected: expected_stanza(options[:expected]) }
+        put_item_params.merge!(options.except(:expected))
+
         begin
-          client.put_item(table_name: table_name,
-            item: item,
-            expected: expected_stanza(options)
-          )
+          client.put_item put_item_params
         rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException => e
           raise Dynamoid::Errors::ConditionalCheckFailedException, e
         end
