@@ -268,7 +268,9 @@ module Dynamoid
         begin
           client.put_item(table_name: table_name,
             item: item,
-            expected: expected_stanza(options)
+            expected: expected_stanza(options),
+            return_consumed_capacity: "TOTAL",
+            return_item_collection_metrics: "SIZE"
           )
         rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException => e
           raise Dynamoid::Errors::ConditionalCheckFailedException, e
