@@ -277,6 +277,32 @@ module Dynamoid
         end
       end
 
+      # Puts or deletes multiple items in one or more tables
+      #
+      # @param [String] table_name the name of the table
+      # @param [Array]  items to be processed
+      # @param [Hash]   additional options
+      #
+      #See: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB/Client.html#batch_write_item-instance_method
+      def batch_write_item table_name, objects, options = {}
+        request_items = []
+        objects.each do |o|
+          request_items << { "put_request" => { "item" => o } }
+        end
+
+        begin
+          client.batch_write_item(
+            {
+              table_name => request_items,
+              return_consumed_capacity: "TOTAL",
+              return_item_collection_metrics: "SIZE"
+            }.merge!(options)
+          )
+        rescue Exception => e
+          puts e.message
+        end
+      end
+
       # Query the DynamoDB table. This employs DynamoDB's indexes so is generally faster than scanning, but is
       # only really useful for range queries, since it can only find by one hash key at once. Only provide
       # one range key to the hash.
