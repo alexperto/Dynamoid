@@ -34,13 +34,15 @@ module Dynamoid
       def batch_write_item table_name, objects, options = {}
         request_items = []
         objects.each do |o|
-          request_items << { "put_request" => { "item" => o } }
+          request_items << { "put_request" => { item: o } }
         end
 
         begin
           client.batch_write_item(
             {
-              table_name => request_items,
+              request_items: {
+                table_name => request_items,
+              },
               return_consumed_capacity: "TOTAL",
               return_item_collection_metrics: "SIZE"
             }.merge!(options)
