@@ -270,7 +270,7 @@ module Dynamoid
             {
               table_name: table_name,
               item: item,
-              expected: expected_stanza(options),
+              expected: expected_stanza(options)
             }.merge!(options)
           )
         rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException => e
